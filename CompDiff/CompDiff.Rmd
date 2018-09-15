@@ -1,0 +1,134 @@
+---
+title: "Packages for Comparison between Dataframes in R"
+author: "billyi"
+date: "2018-09-15"
+output:
+  html_document:
+    css: JhengHei.css
+---
+
+
+# 比較數據框的套件介紹
+
+本文介紹了幾種在[CRAN](https://cran.r-project.org/)上的套件，供您參考。
+
+
+## 前置作業
+
+首先引入含有管道運算子（pipe operator）的[magrittr](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html)函式庫，以備後續使用。
+
+```{r}
+library(magrittr)
+```
+
+接下來製作二個格式相近、內容相仿的數據框，以進行比較。
+
+```{r}
+df1 <- data.frame(
+  char = LETTERS[1:5],
+  intg = 5:9,
+  numb = seq(pi, length.out = 5),
+  bool = c(rep(TRUE, 3), rep(FALSE, 2)),
+  tiangan = c("甲", "乙", "丙", "丁", "戊"),
+  stringsAsFactors = FALSE
+)
+
+df2 <- data.frame(
+  char = LETTERS[c(1:4, 9:10)],
+  intg = c(NA, 6:10),
+  numb = c(seq(pi, length.out = 5), NA),
+  bool = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE),
+  dizhi = c("子", "丑", "寅", "卯", "辰", "巳"),
+  stringsAsFactors = FALSE
+)
+```
+
+先看一下第一個數據框，形狀為`r nrow(df1)`x`r ncol(df1)`，內容如下：
+```{r}
+knitr::kable(df1)
+dplyr::glimpse(df1)
+```
+
+再看看第二個數據框，其形狀為`r nrow(df2)`x`r ncol(df2)`，內容如下：
+```{r}
+knitr::kable(df2)
+dplyr::glimpse(df2)
+```
+
+
+## 比較工具
+
+### compare::compare
+
+引入[compare](https://cran.r-project.org/web/packages/compare/index.html)函式庫，再以`compare`函式進行比較。
+```{r}
+suppressPackageStartupMessages(library(compare))
+compare(df1, df2, allowAll = TRUE)
+```
+
+### compareDF::compare_df
+
+引入[compareDF](https://cran.r-project.org/web/packages/compareDF/index.html)函式庫，再以`compare_df`函式進行比較。
+```{r}
+library(compareDF)
+compare_df(df1[1:4], df2[1:4], group_col = "char")$comparison_df
+```
+
+### daff::diff_data
+
+引入[daff](https://cran.r-project.org/web/packages/daff/index.html)函式庫，再以`diff_data`函式進行比較。
+```{r}
+library(daff)
+daff::diff_data(df1, df2)
+```
+
+### dataCompareR::rCompare
+
+引入[dataCompareR](https://cran.r-project.org/web/packages/dataCompareR/index.html)函式庫，再以`rCompare`函式進行比較，接著用`summary`總結差異所在。
+```{r}
+library(dataCompareR)
+dataCompareR::rCompare(df1, df2) %>% summary()
+```
+
+### dfCompare::dfCompare
+
+引入[dfCompare](https://cran.r-project.org/web/packages/dfCompare/index.html)函式庫，再以`dfCompare`函式進行比較。
+```{r}
+library(dfCompare)
+dfCompare::dfCompare(df1, df2, c("char"))
+```
+
+### diffdf::diffdf
+
+引入[diffdf](https://cran.r-project.org/web/packages/diffdf/index.html)函式庫，再以`diffdf`函式進行比較。
+```{r}
+library(diffdf)
+diffdf::diffdf(df1, df2)
+```
+
+### diffobj::diffPrint
+
+引入[diffobj](https://cran.r-project.org/web/packages/diffobj/index.html)函式庫，再以`diffPrint`函式進行比較。
+```{r}
+library(diffobj)
+```
+```{r}
+# using code chunk option results='asis' not work
+diffobj::diffPrint(df1, df2) # html output in RStudio
+```
+
+### dplyr::all_equal
+
+引入[dplyr](https://cran.r-project.org/web/packages/dplyr/index.html)函式庫，再以`all_equal`函式進行比較。
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+dplyr::all_equal(df1, df2)
+```
+
+
+## Date & Session Info
+
+```{r}
+Sys.Date()
+sessionInfo()
+```
